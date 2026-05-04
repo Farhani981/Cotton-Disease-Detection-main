@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-6" style="background: linear-gradient(to right, #fdfdfd, #f3f6f9);">
+  <div class="container">
+    <h2 class="text-center mb-5" style="font-weight: bold; color: #2c3e50;">Target Spot Disease Information</h2>
+
+    <div class="row">
+      <!-- Image Column -->
+      <div class="col-md-6 mb-4 d-flex align-items-start justify-content-center">
+        <figure class="figure" style="max-width: 510px;">
+          <img src="{{ url_for('static', filename='assets/img/target_spot.jpg') }}" 
+               alt="Target Spot on Cotton Leaf" 
+               class="figure-img img-fluid rounded shadow border w-100"
+               style="object-fit: cover;">
+          <figcaption class="figure-caption text-center text-muted mt-2">
+            <strong>Target Spot Symptoms on Cotton Leaf</strong>
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Info Cards Column -->
+      <div class="col-md-6">
+        <!-- Overview -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #3498db;">
+          <h4><i class="ri-information-line text-primary me-2"></i> Overview</h4>
+          <p style="font-size: 1.05rem; margin-top: 0px;">
+            Target Spot is a fungal disease caused by <em>Corynespora cassiicola</em>. It predominantly infects the leaves of cotton plants, 
+            reducing photosynthetic capacity and potentially causing significant defoliation and yield loss if not treated early.
+          </p>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #f39c12;">
+          <h4><i class="ri-bug-line text-warning me-2"></i> Symptoms</h4>
+          <ul style="margin-top: 0px;">
+            <li><i class="ri-check-double-line text-success me-2"></i> Brown to reddish circular lesions with concentric rings</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Symptoms start on lower leaves and move upward</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Premature defoliation in severe cases</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> May resemble other foliar spot diseases</li>
+          </ul>
+        </div>
+
+        <!-- Control & Cure -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #27ae60;">
+          <h4><i class="ri-shield-check-line text-success me-2"></i> Control & Cure</h4>
+          <ul style="margin-top: 0px;">
+            <li><i class="ri-check-line text-primary me-2"></i> Apply strobilurin or triazole-based fungicides early</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Rotate crops to break fungal life cycles</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Avoid overwatering; ensure good drainage</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Provide adequate plant spacing for airflow</li>
+            <!-- <li><i class="ri-check-line text-primary me-2"></i> Remove and destroy plant debris post-harvest</li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-end mt-4">
+      <a href="{{ url_for('diseases_info') }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line"></i> Back to All Diseases
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Inline CSS and JS for styling and animation -->
+<style>
+  ul li {
+    margin-bottom: 5px;
+    font-size: 1.05rem;
+  }
+  h4 {
+    font-weight: 600;
+    color: #2c3e50;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+      card.style.opacity = 0;
+      card.style.transform = "translateY(40px)";
+      setTimeout(() => {
+        card.style.transition = "all 0.8s ease-in-out";
+        card.style.opacity = 1;
+        card.style.transform = "translateY(0)";
+      }, 300);
+    });
+  });
+</script>
+{% endblock %}

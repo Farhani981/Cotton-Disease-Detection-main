@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}My Reports | Cotton Disease Detection{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light-green min-vh-100">
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-5" data-aos="fade-up">
+      <div>
+        <h2 class="display-6 fw-bold mb-1">Diagnosis Reports</h2>
+        <p class="text-muted mb-0">Track and manage your history of plant health assessments.</p>
+      </div>
+      <a href="{{ url_for('try_page') }}" class="btn btn-professional btn-primary-prof px-4">
+        <i class="ri-add-line me-1"></i> New Prediction
+      </a>
+    </div>
+
+    <!-- Filter Card -->
+    {% if current_user.is_admin %}
+    <div class="card card-prof border-0 shadow-sm mb-4" data-aos="fade-up">
+      <div class="card-body p-4">
+        <form method="get" class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">User Search</label>
+            <input type="text" name="username" value="{{ username_filter }}" placeholder="Filter by username"
+              class="form-control bg-light">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">Start Date</label>
+            <input type="date" name="start_date" value="{{ start_date or '' }}" class="form-control bg-light">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold">End Date</label>
+            <input type="date" name="end_date" value="{{ end_date or '' }}" class="form-control bg-light">
+          </div>
+          <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-professional btn-primary-prof flex-grow-1">Filter</button>
+            <a href="{{ url_for('my_reports') }}" class="btn btn-professional btn-outline-secondary">Clear</a>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Reports Table -->
+    <div class="card card-prof border-0 shadow-sm overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="px-4 py-3 border-0">ID</th>
+              {% if current_user.is_admin %}<th class="py-3 border-0">User</th>{% endif %}
+              <th class="py-3 border-0">Result</th>
+              <th class="py-3 border-0">Confidence</th>
+              <th class="py-3 border-0">Date & Time</th>
+              <th class="px-4 py-3 border-0 text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for report in reports %}
+            <tr>
+              <td class="px-4 small text-muted">#{{ report.id }}</td>
+              {% if current_user.is_admin %}
+              <td>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="bg-soft-primary text-primary rounded-circle d-flex align-items-center justify-content-center me-2"
+                    style="width: 32px; height: 32px; font-size: 0.8rem;">
+                    {{ report.user.username[0] | upper }}
+                  </div>
+                  <span class="small fw-bold">{{ report.user.username }}</span>
+                </div>
+              </td>
+              {% endif %}
+              <td>
+                {% set disease_slug = report.prediction.lower().replace(' ', '-') %}
+                {% if 'aphid' in disease_slug %}
+                {% set link_target = url_for('aphids') %}
+                {% elif 'army' in disease_slug %}
+                {% set link_target = url_for('army_worm') %}
+                {% elif 'bacterial' in disease_slug %}
+                {% set link_target = url_for('bacterial_blight') %}
+                {% elif 'powdery' in disease_slug %}
+                {% set link_target = url_for('powdery_mildew') %}
+                {% elif 'target' in disease_slug %}
+                {% set link_target = url_for('target_spot') %}
+                {% else %}
+                {% set link_target = '#' %}
+                {% endif %}
+                <a href="{{ link_target }}" class="text-decoration-none text-dark hover-primary-link">
+                  <span class="fw-bold">{{ report.prediction }}</span>
+                  {% if link_target != '#' %}
+                  <i class="ri-information-line small ms-1 text-primary opacity-50"></i>
+                  {% endif %}
+                </a>
+              </td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="width: 60px; height: 6px;">
+                    <div class="progress-bar bg-secondary" style="width: {{ report.confidence }}%"></div>
+                  </div>
+                  <span class="small text-muted">{{ report.confidence }}%</span>
+                </div>
+              </td>
+              <td class="small text-muted">
+                {{ report.timestamp.strftime('%b %d, %Y') }}<br>
+                <span class="text-secondary opacity-75">{{ report.timestamp.strftime('%H:%M') }}</span>
+              </td>
+              <td class="px-4 text-end">
+                <a href="{{ url_for('download_report', report_id=report.id) }}"
+                  class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                  <i class="ri-download-2-line me-1"></i> Report
+                </a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <i class="ri-file-search-line display-4 text-muted opacity-25"></i>
+                <p class="text-muted mt-3">No reports found matching your criteria.</p>
+                <a href="{{ url_for('try_page') }}" class="btn btn-link">Generate your first report</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {% if pagination.pages > 1 %}
+      <div class="card-footer bg-white py-4 border-0">
+        {% set args = request.args.to_dict() %}
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item {{ 'disabled' if not pagination.has_prev }}">
+              <a class="page-link border-0 rounded-circle mx-1"
+                href="{{ url_for('my_reports', page=pagination.prev_num, **args) if pagination.has_prev else '#' }}">
+                <i class="ri-arrow-left-s-line"></i>
+              </a>
+            </li>
+
+            <li class="page-item disabled">
+              <span class="page-link border-0 text-dark bg-transparent fw-bold mx-2">
+                Page {{ pagination.page }} of {{ pagination.pages }}
+              </span>
+            </li>
+
+            <li class="page-item {{ 'disabled' if not pagination.has_next }}">
+              <a class="page-link border-0 rounded-circle mx-1"
+                href="{{ url_for('my_reports', page=pagination.next_num, **args) if pagination.has_next else '#' }}">
+                <i class="ri-arrow-right-s-line"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Disease Analysis (Optional Admin View) -->
+    {% if disease_counts %}
+    <div class="mt-5" data-aos="fade-up">
+      <div class="card card-prof border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Disease Frequency Analysis</h5>
+            <a href="{{ url_for('export_disease_frequency_csv', username=username_filter, start_date=start_date, end_date=end_date) }}"
+              class="btn btn-sm btn-success rounded-pill px-3">
+              <i class="ri-file-excel-2-line me-1"></i> Export CSV
+            </a>
+          </div>
+          <div class="row g-3">
+            {% for disease, count in disease_counts.items() %}
+            <div class="col-md-4 col-lg-3">
+              <div class="p-3 border rounded-4 bg-light">
+                <h6 class="text-muted small mb-1">{{ disease }}</h6>
+                <h3 class="fw-bold mb-0">{{ count }} <span class="fs-6 fw-normal text-muted">cases</span></h3>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .bg-light-green {
+    background-color: #f1f5f2;
+  }
+
+  .bg-soft-primary {
+    background-color: rgba(27, 67, 50, 0.1);
+  }
+
+  .table thead th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+  }
+
+  .page-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+  }
+
+  .page-link:hover {
+    background-color: var(--primary);
+    color: white;
+  }
+</style>
+{% endblock %}

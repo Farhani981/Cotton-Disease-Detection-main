@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | Cotton Disease Detection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="{{ url_for('static', filename='assets/img/favicon.png')}}" />
+
+  <!-- Fonts & Icons -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary: #1b4332;
+      --secondary: #2d6a4f;
+      --accent: #ff9f1c;
+      --light-green: #f1f5f2;
+      --sidebar-width: 280px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-green);
+      color: #1a202c;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Sidebar Styles */
+    aside {
+      width: var(--sidebar-width);
+      background: var(--primary);
+      color: white;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    aside .logo {
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    aside .logo i {
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    aside .nav-group {
+      flex-grow: 1;
+    }
+
+    aside .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
+    aside .nav-item:hover,
+    aside .nav-item.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    aside .nav-item i {
+      font-size: 1.2rem;
+    }
+
+    aside .bottom-nav {
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem;
+    }
+
+    /* Main Content Styles */
+    main {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 2.5rem;
+      max-width: calc(100% - var(--sidebar-width));
+    }
+
+    header.dashboard-header {
+      margin-bottom: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-section {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .log-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+    }
+
+    /* Table Overrides */
+    .table {
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    .table thead th {
+      background: transparent;
+      border: none;
+      color: #6c757d;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 1rem;
+    }
+
+    .table tbody tr {
+      background: #f8fbf9;
+      transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      transform: scale(1.01);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .table tbody td {
+      vertical-align: middle;
+      border: none;
+      padding: 1rem;
+    }
+
+    .table tbody tr td:first-child {
+      border-radius: 12px 0 0 12px;
+    }
+
+    .table tbody tr td:last-child {
+      border-radius: 0 12px 12px 0;
+    }
+
+    /* Buttons & Forms */
+    .btn-prof {
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-prof-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .btn-prof-primary:hover {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .form-control-prof {
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem 1rem;
+      background: #f8fafc;
+    }
+
+    .form-control-prof:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(27, 67, 50, 0.1);
+      background: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 2000;
+      background: var(--primary);
+      color: white;
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 1045px) {
+      aside {
+        left: -var(--sidebar-width);
+      }
+
+      aside.show {
+        left: 0;
+      }
+
+      main {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 1.5rem;
+        padding-top: 5rem;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="menu-toggle" id="menuToggle">
+    <i class="ri-menu-line"></i>
+  </div>
+
+  <aside id="sidebar">
+    <div class="logo">
+      <i class="ri-pulse-fill"></i>
+      <span class="fs-4 fw-bold font-outfit">Nature Admin</span>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-item active" onclick="toggleDashboardSection('manage-users', this)">
+        <i class="ri-user-settings-line"></i>
+        <span>Manage Users</span>
+      </div>
+      <div class="nav-item" onclick="toggleDashboardSection('view-users', this)">
+        <i class="ri-group-line"></i>
+        <span>All Users</span>
+      </div>
+      <div class="nav-item" onclick="toggleDashboardSection('signup', this)">
+        <i class="ri-user-add-line"></i>
+        <span>Signup Logs</span>
+      </div>
+      <div class="nav-item" onclick="toggleDashboardSection('login', this)">
+        <i class="ri-login-box-line"></i>
+        <span>Login Logs</span>
+      </div>
+      <div class="nav-item" onclick="toggleDashboardSection('session', this)">
+        <i class="ri-history-line"></i>
+        <span>Sessions</span>
+      </div>
+      <div class="nav-item" onclick="toggleDashboardSection('charts', this)">
+        <i class="ri-pie-chart-line"></i>
+        <span>Analytics</span>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="{{ url_for('home') }}" class="nav-item">
+        <i class="ri-home-4-line"></i>
+        <span>Live Site</span>
+      </a>
+      <a href="{{ url_for('logout') }}" class="nav-item text-white-50">
+        <i class="ri-logout-box-r-line"></i>
+        <span>Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+  <main>
+    <header class="dashboard-header">
+      <div>
+        <h1 class="fw-bold mb-0">Dashboard</h1>
+        <p class="text-muted small">Welcome back, Admin</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-prof btn-prof-primary" onclick="toggleDashboardSection('add-users')">
+          <i class="ri-user-add-line me-1"></i> Add User
+        </button>
+      </div>
+    </header>
+
+    <!-- Add users -->
+    <div id="add-users" class="log-section animate__animated animate__fadeIn">
+      <h2>Quick Add New User</h2>
+      <form action="{{ url_for('add_user') }}" method="POST">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <input type="text" name="username" class="form-control form-control-prof" placeholder="Username" required
+              pattern="^[A-Za-z][A-Za-z0-9._]{2,19}$" title="3–20 characters, starts with letter.">
+          </div>
+          <div class="col-md-3">
+            <input type="email" name="email" class="form-control form-control-prof" placeholder="Email" required
+              pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[cC][oO][mM]$" title="Valid email ending in .com">
+          </div>
+          <div class="col-md-3">
+            <input type="password" name="password" class="form-control form-control-prof" placeholder="Password"
+              required minlength="6">
+          </div>
+          <div class="col-md-3">
+            <div class="d-flex gap-2">
+              <select name="role" class="form-select form-control-prof" required>
+                <option disabled selected value="">Role</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button class="btn btn-prof btn-prof-primary" type="submit">Create</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- User Management -->
+    <div id="manage-users" class="log-section animate__animated animate__fadeIn">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">User Management</h2>
+        <form method="GET" action="{{ url_for('manage_users') }}" class="d-flex gap-2">
+          <input type="text" name="search" class="form-control form-control-prof small" placeholder="Search users..."
+            value="{{ request.args.get('search', '') }}" style="width: 250px;">
+          <button type="submit" class="btn btn-prof btn-prof-primary px-3">
+            <i class="ri-search-line"></i>
+          </button>
+          {% if request.args.get('search') %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-prof btn-light px-3">Reset</a>
+          {% endif %}
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>User Details</th>
+              <th>Role & Access</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>
+                <form action="{{ url_for('edit_user', user_id=user.id) }}" method="POST" id="form-{{ user.id }}">
+                  <div class="d-flex align-items-center gap-3">
+                    <div
+                      class="bg-soft-primary text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                      style="width: 40px; height: 40px; background: rgba(27, 67, 50, 0.1);">
+                      {{ user.username[0] | upper }}
+                    </div>
+                    <div>
+                      <input type="text" name="username" value="{{ user.username }}"
+                        class="form-control form-control-sm border-0 bg-transparent fw-bold"
+                        style="padding: 0; min-width: 150px;">
+                      <input type="email" name="email" value="{{ user.email }}"
+                        class="form-control form-control-sm border-0 bg-transparent text-muted small"
+                        style="padding: 0; min-width: 200px;">
+                    </div>
+                  </div>
+              </td>
+              <td>
+                <div class="d-flex flex-column gap-2">
+                  <select name="role" class="form-select form-select-sm border-0 bg-transparent fw-bold"
+                    style="padding: 0; width: 100px;">
+                    <option value="user" {% if user.role=='user' %}selected{% endif %}>User</option>
+                    <option value="admin" {% if user.role=='admin' %}selected{% endif %}>Admin</option>
+                  </select>
+                  <input type="password" name="password" placeholder="New password?"
+                    class="form-control form-control-sm border-0 bg-transparent small" style="padding: 0;">
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                  <button type="submit" class="btn btn-sm btn-light border-0 px-3 py-2" title="Save Changes">
+                    <i class="ri-save-line text-primary"></i>
+                  </button>
+                  </form>
+                  <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST"
+                    onsubmit="return confirm('Really delete user {{ user.username }}?')">
+                    <button type="submit" class="btn btn-sm btn-light border-0 px-3 py-2" title="Delete User">
+                      <i class="ri-delete-bin-line text-danger"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- View Users Section -->
+    <div id="view-users" class="log-section animate__animated animate__fadeIn hidden">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">All Registered Users</h2>
+        <form method="get" action="{{ url_for('admin_dashboard') }}" class="d-flex gap-2">
+          <input type="hidden" name="section" value="view-users">
+          <input type="text" name="user_search" class="form-control form-control-prof" placeholder="Search username..."
+            value="{{ request.args.get('user_search', '') }}">
+          <button type="submit" class="btn btn-prof btn-prof-primary">Filter</button>
+          <a href="{{ url_for('admin_dashboard', section='view-users') }}" class="btn btn-prof btn-light">Clear</a>
+          <a href="{{ url_for('export_users_csv', user_search=request.args.get('user_search', '')) }}"
+            class="btn btn-prof btn-outline-success">
+            <i class="ri-file-excel-line"></i> CSV
+          </a>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle" id="viewUsersTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Email</th>
+              <th>Stats</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>#{{ user.id }}</td>
+              <td><span class="fw-bold">{{ user.username }}</span></td>
+              <td><span class="text-muted small">{{ user.email }}</span></td>
+              <td>
+                <span class="badge bg-light text-dark rounded-pill px-2">
+                  <i class="ri-upload-cloud-2-line me-1"></i>{{ user.upload_attempts }}
+                </span>
+              </td>
+              <td>
+                {% if user.is_admin %}
+                <span class="badge bg-soft-info text-info rounded-pill px-3">Admin</span>
+                {% else %}
+                <span class="badge bg-soft-secondary text-secondary rounded-pill px-3">{{ user.role | capitalize
+                  }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Signup history Section -->
+    <div id="signup" class="log-section animate__animated animate__fadeIn hidden">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Signup History</h2>
+        <form method="get" action="{{ url_for('admin_dashboard') }}" class="d-flex gap-2">
+          <input type="hidden" name="section" value="signup">
+          <input type="text" name="signup_username" class="form-control form-control-prof" placeholder="User..."
+            value="{{ request.args.get('signup_username', '') }}" style="width: 150px;">
+          <input type="date" name="signup_start" class="form-control form-control-prof"
+            value="{{ request.args.get('signup_start', '') }}">
+          <input type="date" name="signup_end" class="form-control form-control-prof"
+            value="{{ request.args.get('signup_end', '') }}">
+          <button type="submit" class="btn btn-prof btn-prof-primary">Filter</button>
+          <a class="btn btn-prof btn-outline-success"
+            href="{{ url_for('export_signup_csv', signup_username=request.args.get('signup_username', ''), signup_start=request.args.get('signup_start', ''), signup_end=request.args.get('signup_end', '')) }}">
+            <i class="ri-file-excel-line"></i>
+          </a>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle" id="signupTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Registration Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in signup_logs %}
+            <tr>
+              <td>#{{ log.id }}</td>
+              <td class="fw-bold">{{ log.username }}</td>
+              <td><i class="ri-calendar-line me-1"></i>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Login history Section -->
+    <div id="login" class="log-section animate__animated animate__fadeIn hidden">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Login History</h2>
+        <form method="get" action="{{ url_for('admin_dashboard') }}" class="d-flex gap-2">
+          <input type="hidden" name="section" value="login">
+          <input type="text" name="login_username" class="form-control form-control-prof" placeholder="User..."
+            value="{{ request.args.get('login_username', '') }}" style="width: 150px;">
+          <input type="date" name="login_start" class="form-control form-control-prof"
+            value="{{ request.args.get('login_start', '') }}">
+          <input type="date" name="login_end" class="form-control form-control-prof"
+            value="{{ request.args.get('login_end', '') }}">
+          <button type="submit" class="btn btn-prof btn-prof-primary">Filter</button>
+          <a class="btn btn-prof btn-outline-success"
+            href="{{ url_for('export_login_csv', login_username=request.args.get('login_username', ''), login_start=request.args.get('login_start', ''), login_end=request.args.get('login_end', '')) }}">
+            <i class="ri-file-excel-line"></i>
+          </a>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle" id="loginTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in login_logs %}
+            <tr>
+              <td>#{{ log.id }}</td>
+              <td class="fw-bold">{{ log.username }}</td>
+              <td>
+                {% if log.success %}
+                <span class="badge bg-soft-success text-success rounded-pill px-3">Success</span>
+                {% else %}
+                <span class="badge bg-soft-danger text-danger rounded-pill px-3">Failed</span>
+                {% endif %}
+              </td>
+              <td><i class="ri-time-line me-1"></i>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Session history Section -->
+    <div id="session" class="log-section animate__animated animate__fadeIn hidden">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Session Monitoring</h2>
+        <form method="get" action="{{ url_for('admin_dashboard') }}" class="d-flex gap-2">
+          <input type="hidden" name="section" value="session">
+          <input type="text" name="session_username" class="form-control form-control-prof" placeholder="User..."
+            value="{{ request.args.get('session_username', '') }}" style="width: 150px;">
+          <input type="date" name="session_start" class="form-control form-control-prof"
+            value="{{ request.args.get('session_start', '') }}">
+          <input type="date" name="session_end" class="form-control form-control-prof"
+            value="{{ request.args.get('session_end', '') }}">
+          <button type="submit" class="btn btn-prof btn-prof-primary">Filter</button>
+          <a href="{{ url_for('export_session_csv', session_username=request.args.get('session_username', ''), session_start=request.args.get('session_start', ''), session_end=request.args.get('session_end', '')) }}"
+            class="btn btn-prof btn-outline-success">
+            <i class="ri-file-excel-line"></i>
+          </a>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle" id="sessionTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Activity</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in session_logs %}
+            <tr>
+              <td>#{{ log.id }}</td>
+              <td class="fw-bold">{{ log.username }} <small class="text-muted">(ID: {{ log.user_id }})</small></td>
+              <td><span class="text-secondary">{{ log.action }}</span></td>
+              <td><i class="ri-time-line me-1"></i>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div id="charts" class="log-section animate__animated animate__fadeIn hidden">
+      <h2 class="mb-4">Platform Analytics</h2>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card border-0 bg-light rounded-4 p-4">
+            <h5 class="fw-bold mb-3">User Engagement (Login Frequency)</h5>
+            <canvas id="loginChart" width="400" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- JS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleDashboardSection(id, element) {
+      const sections = document.querySelectorAll('.log-section');
+      const navItems = document.querySelectorAll('.nav-item');
+
+      // Hide all sections
+      sections.forEach(s => s.classList.add('hidden'));
+
+      // Show target
+      const target = document.getElementById(id);
+      if (target) target.classList.remove('hidden');
+
+      // Update sidebar active state
+      if (element) {
+        navItems.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+      }
+
+      // Mobile sidebar handle
+      if (window.innerWidth < 1045) {
+        document.getElementById('sidebar').classList.remove('show');
+      }
+    }
+
+    // Search Filters
+    function filterTable(input, tableId) {
+      let filter = input.value.toLowerCase();
+      let table = document.getElementById(tableId);
+      let rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        let username = rows[i].getElementsByTagName("td")[1];
+        let rowMatched = username && username.textContent.toLowerCase().includes(filter);
+        rows[i].style.display = rowMatched ? "" : "none";
+      }
+    }
+
+    // Export CSV
+    function exportTableToCSV(tableId, filename) {
+      const table = document.getElementById(tableId);
+      let csv = [];
+      for (let row of table.rows) {
+        let rowData = [...row.cells].map(cell => `"${cell.innerText.replace(/"/g, '""')}"`);
+        csv.push(rowData.join(","));
+      }
+      const blob = new Blob([csv.join("\n")], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', async function () {
+      // URL Direct Access
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get("section") || "manage-users";
+      const navItem = document.querySelector(`[onclick*="${section}"]`);
+      toggleDashboardSection(section, navItem);
+
+      // Menu Toggle
+      document.getElementById('menuToggle').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('show');
+      });
+
+      // Close sidebar when clicking outside
+      document.addEventListener("click", (e) => {
+        const sidebar = document.getElementById('sidebar');
+        const toggle = document.getElementById('menuToggle');
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+          sidebar.classList.remove("show");
+        }
+      });
+
+      // Analytics Chart
+      const ctx = document.getElementById('loginChart');
+      if (ctx) {
+        try {
+          const response = await fetch('/api/login_chart_data');
+          const data = await response.json();
+          if (!data.error) {
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: Object.keys(data),
+                datasets: [{
+                  label: 'Logins',
+                  data: Object.values(data),
+                  backgroundColor: '#2d6a4f',
+                  borderRadius: 10,
+                  barThickness: 30
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Chart failed to load', e);
+        }
+      }
+    });
+  </script>
+
+  <!-- Notifications Trigger -->
+  <div style="position: fixed; top: 1rem; right: 1rem; z-index: 2050;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div
+      class="toast show align-items-center text-bg-{{ 'primary' if category == 'success' else 'danger' }} border-0 mb-2"
+      role="alert" data-bs-autohide="true">
+      <div class="d-flex">
+        <div class="toast-body">{{ message }}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+    {% endfor %}
+    {% endwith %}
+  </div>
+</body>
+
+</html>

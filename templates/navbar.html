@@ -1,0 +1,71 @@
+<nav class="navbar navbar-expand-lg navbar-professional navbar-light fixed-top py-2">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center me-0" href="{{ url_for('home') }}" style="max-width: 75%;">
+      <img src="{{ url_for('static', filename='assets/img/logo.png') }}" alt="Logo" width="35" height="35" class="me-2 flex-shrink-0">
+      <span class="fw-bold tracking-tight text-truncate">Cotton Disease <span class="text-secondary">Detection</span></span>
+    </a>
+
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('diseases_info') }}">Diseases Info</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('ai_assistant') }}">AI Assistant</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('forum') }}">Community Forum</a>
+        </li>
+
+        {% if current_user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('my_reports') }}">Reports</a>
+        </li>
+        {% if current_user.is_admin %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        </li>
+        {% endif %}
+        {% endif %}
+      </ul>
+
+      <div class="navbar-nav-actions d-flex align-items-center gap-3">
+        {% if current_user.is_authenticated %}
+        <div class="dropdown">
+          <a class="btn btn-professional btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="ri-user-line me-1"></i> {{ current_user.username }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4 mt-2">
+            <li><a class="dropdown-item py-2 px-3" href="{{ url_for('profile') }}"><i class="ri-settings-line me-1"></i> Profile Settings</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item py-2 px-3 text-danger" href="{{ url_for('logout') }}"><i
+                  class="ri-logout-box-line me-1"></i> Logout</a></li>
+          </ul>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-professional d-md-none">
+          <i class="ri-logout-box-line"></i> Logout
+        </a>
+        {% else %}
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('login') }}" class="btn btn-professional btn-light">Login</a>
+            <a href="{{ url_for('register') }}" class="btn btn-professional btn-accent-prof">Sign Up</a>
+        </div>
+        {% endif %}
+        <a href="{{ url_for('try_page') }}" class="btn btn-professional btn-primary-prof d-none d-lg-flex">Get
+          Started</a>
+      </div>
+    </div>
+  </div>
+</nav>

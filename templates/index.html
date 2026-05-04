@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Cotton Disease Detection | AI-Powered Agriculture{% endblock %}
+
+{% block content %}
+<!-- About & Features Section (Now Hero) -->
+<section class="py-5 section-green">
+  <div class="container py-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 order-2 order-lg-1" data-aos="fade-right">
+        <div class="section-badge mb-3">About The Project</div>
+        <h2 class="display-3 mb-4 fw-bold">Precision Agriculture Through <span class="text-secondary text-light">AI
+            Innovation</span></h2>
+        <p class="lead text-muted mb-4">Cotton is the backbone of the textile industry. Our mission is to empower
+          farmers with tools that detect diseases like Aphids and Bacterial Blight before they cause widespread damage.
+        </p>
+        <ul class="list-unstyled mb-5 text-white">
+          <li class="mb-3 d-flex align-items-center"><i class="ri-checkbox-circle-fill text-accent fs-4 me-3"></i>
+            ResNet-50 Deep Learning Model</li>
+          <li class="mb-3 d-flex align-items-center"><i class="ri-checkbox-circle-fill text-accent fs-4 me-3"></i>
+            Automated PDF Report Generation</li>
+          <li class="mb-3 d-flex align-items-center"><i class="ri-checkbox-circle-fill text-accent fs-4 me-3"></i>
+            Multi-tier Subscription Management</li>
+        </ul>
+        <div class="d-flex gap-3">
+          <a href="{{ url_for('register') }}" class="btn btn-professional btn-accent-prof">Join the Community</a>
+          <a href="{{ url_for('try_page') }}" class="btn btn-professional btn-primary-prof border-white">Get Started</a>
+        </div>
+      </div>
+      <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left">
+        <div class="position-relative">
+          <img src="{{ url_for('static', filename='assets/img/hero-scanner.png') }}"
+            class="img-fluid rounded-5 shadow-lg" alt="Cotton Plant">
+          <div
+            class="position-absolute bottom-0 start-0 translate-middle-y bg-white p-4 rounded-4 shadow-sm m-4 d-none d-md-block border-start border-primary border-4 text-dark">
+            <div class="d-flex align-items-center mb-1">
+              <i class="ri-shield-check-line text-primary fs-3 me-2"></i>
+              <span class="h6 mb-0 fw-bold">Verified Accuracy</span>
+            </div>
+            <p class="small text-muted mb-0">Tested on 10,000+ crop images</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Original Hero Section (Now Secondary) -->
+<section class="hero-prof">
+  <div class="container text-center">
+    <div class="row justify-content-center">
+      <div class="col-lg-8" data-aos="fade-up">
+        <h1 class="display-3 fw-bold mb-4">AI Sees What <span class="text-secondary text-gradient">You Can’t</span></h1>
+        <p class="hero-tagline mb-5">Identify cotton plant diseases early and accurately with our advanced Deep Learning
+          system. Protect your crops and maximize your harvest.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="{{ url_for('try_page') }}" class="btn btn-professional btn-primary-prof btn-lg px-5">Get Started
+            Now</a>
+          <a href="#features" class="btn btn-professional btn-outline-secondary btn-lg px-5">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5" id="features">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="counter-item">
+          <h2 class="display-5 fw-bold text-primary mb-0">{{ total_reports if total_reports else 0 }}+</h2>
+          <p class="text-muted fw-medium">Total Scans</p>
+        </div>
+      </div>
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="counter-item">
+          <h2 class="display-5 fw-bold text-primary mb-0">5</h2>
+          <p class="text-muted fw-medium">Identifiable Diseases</p>
+        </div>
+      </div>
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="counter-item">
+          <h2 class="display-5 fw-bold text-primary mb-0">{{ total_users if total_users else 0 }}+</h2>
+          <p class="text-muted fw-medium">Registered Farmers</p>
+        </div>
+      </div>
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+        <div class="counter-item">
+          <h2 class="display-5 fw-bold text-primary mb-0">98%</h2>
+          <p class="text-muted fw-medium">Model Accuracy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Steps Section -->
+<section class="py-5 bg-light-green">
+  <div class="container py-5">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="display-6 mb-3">Simple 4-Step Process</h2>
+      <p class="text-muted mx-auto" style="max-width: 600px;">Get your crop health status in seconds with our
+        streamlined workflow.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="card card-prof text-center">
+          <div class="card-icon mx-auto"><i class="ri-folder-upload-line"></i></div>
+          <h4>Upload</h4>
+          <p class="small text-muted mb-0">Select a clear image of the cotton leaf.</p>
+          <div class="step-num text-secondary fw-bold mt-3 fs-5">01</div>
+        </div>
+      </div>
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="card card-prof text-center">
+          <div class="card-icon mx-auto"><i class="ri-cpu-line"></i></div>
+          <h4>Analyze</h4>
+          <p class="small text-muted mb-0">Wait for our AI model to process the image.</p>
+          <div class="step-num text-secondary fw-bold mt-3 fs-5">02</div>
+        </div>
+      </div>
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="card card-prof text-center">
+          <div class="card-icon mx-auto"><i class="ri-search-eye-line"></i></div>
+          <h4>Detect</h4>
+          <p class="small text-muted mb-0">Identify specific disease markers instantly.</p>
+          <div class="step-num text-secondary fw-bold mt-3 fs-5">03</div>
+        </div>
+      </div>
+      <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+        <div class="card card-prof text-center">
+          <div class="card-icon mx-auto"><i class="ri-file-pdf-line"></i></div>
+          <h4>Report</h4>
+          <p class="small text-muted mb-0">Download a professional diagnostic report.</p>
+          <div class="step-num text-secondary fw-bold mt-3 fs-5">04</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bg-light-green {
+    background-color: #f1f5f2;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .section-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(45, 106, 79, 0.1);
+    color: var(--primary);
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+</style>
+{% endblock %}

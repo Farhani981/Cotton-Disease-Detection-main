@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | Cotton Disease Detection{% endblock %}
+
+{% block content %}
+<section class="auth-section py-5 d-flex align-items-center min-vh-100 bg-light-green">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-8">
+        <div class="card card-prof border-0 shadow-lg" data-aos="zoom-in">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <i class="ri-shield-user-line display-4 text-primary"></i>
+              <h2 class="fw-bold mt-2">Welcome Back</h2>
+              <p class="text-muted small">Sign in to access your dashboard and reports</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+              class="alert alert-{{ 'danger' if category == 'danger' or category == 'error' else 'success' }} alert-dismissible fade show rounded-3 small py-2"
+              role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form method="POST" action="/login" id="login-form">
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Username</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="ri-user-line"></i></span>
+                  <input type="text" name="username" class="form-control bg-light border-start-0"
+                    placeholder="Enter your username" required>
+                </div>
+              </div>
+              <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label class="form-label small fw-bold mb-0">Password</label>
+                  <button type="button" id="forgotBtn" class="btn btn-link p-0 small text-decoration-none">Forgot
+                    Password?</button>
+                </div>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="ri-lock-line"></i></span>
+                  <input type="password" name="password" id="password" class="form-control bg-light border-start-0 border-end-0"
+                    placeholder="••••••••" required minlength="6">
+                  <button class="input-group-text bg-light border-start-0" type="button" id="togglePassword">
+                    <i class="ri-eye-line" id="eyeIcon"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-professional btn-primary-prof w-100 py-3 mb-3">
+                Sign In
+              </button>
+            </form>
+
+            <!-- Forgot Password Form -->
+            <form id="forgotForm" method="POST" action="/forgot-password"
+              class="d-none animate__animated animate__fadeIn">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Email</label>
+                <input type="email" name="forgot_email" class="form-control bg-light" placeholder="email@example.com"
+                  required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label small fw-bold">Username</label>
+                <input type="text" name="forgot_username" class="form-control bg-light" placeholder="Username" required>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="button" id="cancelForgot" class="btn btn-light w-100">Cancel</button>
+                <button type="submit" class="btn btn-professional btn-primary-prof w-100">Send Reset Link</button>
+              </div>
+            </form>
+
+            <div class="text-center mt-4 pt-3 border-top">
+              <p class="small text-muted mb-0">Don't have an account?
+                <a href="{{ url_for('register') }}" class="fw-bold text-decoration-none text-primary">Sign up
+                  Now</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bg-light-green {
+    background-color: #f1f5f2;
+  }
+
+  .auth-section {
+    background: linear-gradient(135deg, #f1f5f2 0%, #e8f0eb 100%);
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+    border-color: var(--primary);
+  }
+
+  .input-group-text {
+    color: #888;
+    transition: all 0.3s ease;
+  }
+
+  button.input-group-text:hover {
+    color: var(--primary);
+    background: #eef2f0 !important;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const forgotBtn = document.getElementById('forgotBtn');
+    const forgotForm = document.getElementById('forgotForm');
+    const loginForm = document.getElementById('login-form');
+    const cancelForgot = document.getElementById('cancelForgot');
+
+    forgotBtn?.addEventListener('click', () => {
+      loginForm.classList.add('d-none');
+      forgotForm.classList.remove('d-none');
+    });
+
+    cancelForgot?.addEventListener('click', () => {
+      forgotForm.classList.add('d-none');
+      loginForm.classList.remove('d-none');
+    });
+
+    // Password Toggle
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    const eyeIcon = document.querySelector('#eyeIcon');
+
+    togglePassword?.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      eyeIcon.classList.toggle('ri-eye-line');
+      eyeIcon.classList.toggle('ri-eye-off-line');
+    });
+  });
+</script>
+{% endblock %}

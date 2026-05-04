@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Assistant | CottonBot{% endblock %}
+
+{% block content %}
+<section class="py-5" style="min-height: 80vh; background: linear-gradient(180deg, #f7fdf9 0%, #ffffff 100%);">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="card card-prof chat-card shadow-lg border-0">
+                    <div class="card-header bg-white border-bottom d-flex align-items-center py-3 px-4">
+                        <div class="bot-avatar me-3">
+                            <i class="ri-robot-2-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">CottonBot <span class="badge bg-soft-success ms-2" style="font-size: 0.6rem; vertical-align: middle;">AI</span></h5>
+                            <small class="text-success d-flex align-items-center"><span class="status-dot"></span> Online</small>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body chat-body" id="chat-container">
+                        <!-- Bot Welcome Message -->
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                Hello! I am <strong>CottonBot</strong>. 🌿<br><br>
+                                I am here to help you with cotton crop management, disease prevention, and treatments. You can ask me any question in English or Urdu.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white border-top py-3 px-4">
+                        <form id="chat-form" class="d-flex gap-2">
+                            <input type="text" id="user-input" class="form-control rounded-pill px-4" placeholder="Type your question here..." autocomplete="off" required>
+                            <button type="submit" class="btn btn-primary-prof btn-icon rounded-circle shadow-sm">
+                                <i class="ri-send-plane-2-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .bg-soft-success {
+        background-color: rgba(76, 209, 55, 0.1);
+        color: #4cd137;
+    }
+    .chat-card {
+        display: flex;
+        flex-direction: column;
+        height: 650px;
+        padding: 0;
+        border-radius: 30px !important;
+        overflow: hidden;
+    }
+    .chat-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        background: #fdfdfd;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-light) #f1f1f1;
+    }
+    .chat-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    .chat-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    .chat-body::-webkit-scrollbar-thumb {
+        background: var(--primary-light);
+        border-radius: 10px;
+    }
+    .message {
+        max-width: 85%;
+        padding: 1rem 1.4rem;
+        border-radius: 22px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        position: relative;
+        animation: messageFadeIn 0.3s ease-out;
+    }
+    @keyframes messageFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .bot-message {
+        align-self: flex-start;
+        background: #f1f5f9;
+        color: #1e293b;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .user-message {
+        align-self: flex-end;
+        background: var(--primary);
+        color: var(--white);
+        border-bottom-right-radius: 4px;
+        box-shadow: 0 4px 15px rgba(26, 77, 46, 0.15);
+    }
+    .bot-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: var(--white);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        box-shadow: 0 4px 10px rgba(26, 77, 46, 0.2);
+    }
+    .status-dot {
+        height: 8px;
+        width: 8px;
+        background-color: #4cd137;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+        box-shadow: 0 0 0 2px rgba(76, 209, 55, 0.2);
+    }
+    .btn-icon {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    .typing-indicator {
+        font-style: italic;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .form-control:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 0.25rem rgba(45, 106, 79, 0.1);
+    }
+</style>
+
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const chatContainer = document.getElementById('chat-container');
+
+    function appendMessage(role, text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${role}-message`;
+        msgDiv.innerHTML = `<div class="message-content">${text}</div>`;
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        appendMessage('user', message);
+        userInput.value = '';
+
+        // Add typing indicator
+        const typingId = 'typing-' + Date.now();
+        const typingDiv = document.createElement('div');
+        typingDiv.id = typingId;
+        typingDiv.className = 'typing-indicator ms-2';
+        typingDiv.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> CottonBot is thinking...`;
+        chatContainer.appendChild(typingDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            
+            // Remove typing indicator
+            document.getElementById(typingId).remove();
+
+            if (data.status === 'success') {
+                // Formatting bot response for line breaks
+                const formattedMessage = data.message
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                appendMessage('bot', formattedMessage);
+            } else {
+                appendMessage('bot', 'I apologize, something went wrong: ' + data.message);
+            }
+        } catch (error) {
+            if (document.getElementById(typingId)) {
+                document.getElementById(typingId).remove();
+            }
+            appendMessage('bot', 'Please check your internet connection and try again.');
+        }
+    });
+</script>
+{% endblock %}

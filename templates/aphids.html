@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-6" style="background: linear-gradient(to right, #f9f9f9, #eef1f5);">
+  <div class="container">
+    <h2 class="text-center mb-5" style="font-weight: bold; color: #203b56;">Aphids Disease Information</h2>
+
+    <!-- Two Column Layout -->
+    <div class="row">
+      <!-- Left Column: Image -->
+      <div class="col-md-6 mb-4">
+        <figure class="figure w-100">
+          <img src="{{ url_for('static', filename='assets/img/aphids.jpg') }}" 
+               alt="Aphids on Cotton" 
+               class="figure-img img-fluid rounded shadow border w-100"
+               style="max-height: 600px; object-fit: cover;">
+          <figcaption class="figure-caption text-center text-muted mt-2"><strong>Aphids Infestation on Cotton</strong> </figcaption>
+        </figure>
+      </div>
+
+      <!-- Right Column: Cards -->
+      <div class="col-md-6">
+        <!-- Overview Card -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #3498db;">
+          <h4><i class="ri-information-line text-primary me-2"></i> Overview</h4>
+          <p style="font-size: 1.05rem; margin-top: 5px;">
+            Aphids are small sap-sucking insects that can cause significant damage to cotton plants. 
+            They feed on the plant's juices, weakening the plant and transmitting harmful viruses. 
+            Infestations can lead to reduced yield and poor fiber quality.
+          </p>
+        </div>
+
+        <!-- Symptoms Card -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #f39c12;">
+          <h4><i class="ri-bug-line text-warning me-2"></i> Symptoms</h4>
+          <ul style="margin-top: 5px;">
+            <li><i class="ri-check-double-line text-success me-2"></i> Yellowing or curling of leaves</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Sticky substance (honeydew) on leaves and stems</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Presence of ants around the plant</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Distorted or stunted growth</li>
+            <!-- <li><i class="ri-check-double-line text-success me-2"></i> Black sooty mold on the honeydew deposits</li> -->
+          </ul>
+        </div>
+
+        <!-- Control & Cure Card -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #27ae60;">
+          <h4><i class="ri-shield-check-line text-success me-2"></i>  Control & Cure</h4>
+          <ul style="margin-top: 5px;">
+            <li><i class="ri-check-line text-primary me-2"></i> Introduce natural predators like ladybugs or lacewings</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Use neem oil or insecticidal soaps</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Apply recommended insecticides if infestation is severe</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Practice crop rotation and proper field sanitation</li>
+            <!-- <li><i class="ri-check-line text-primary me-2"></i> Monitor early signs for timely action</li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-end mt-4">
+      <a href="{{ url_for('diseases_info') }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line"></i> Back to All Diseases
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Inline CSS & JS -->
+<style>
+  ul li {
+    margin-bottom: 5px;
+    font-size: 1.05rem;
+  }
+  h4 {
+    font-weight: 600;
+    color: #2c3e50;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+      card.style.opacity = 0;
+      card.style.transform = "translateY(40px)";
+      setTimeout(() => {
+        card.style.transition = "all 0.8s ease-in-out";
+        card.style.opacity = 1;
+        card.style.transform = "translateY(0)";
+      }, 300);
+    });
+  });
+</script>
+{% endblock %}

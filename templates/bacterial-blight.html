@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-6" style="background: linear-gradient(to right, #f9f9f9, #eef1f5);">
+  <div class="container">
+    <h2 class="text-center mb-5" style="font-weight: bold; color: #2c3e50;">Bacterial Blight Disease Information</h2>
+
+    <div class="row">
+      <!-- Image Column -->
+      <div class="col-md-6 mb-4 d-flex align-items-start justify-content-center">
+        <figure class="figure" style="max-width: 1100px;">
+          <img src="{{ url_for('static', filename='assets/img/bacterial_blight.jpg') }}"
+               alt="Bacterial Blight on Cotton"
+               class="figure-img img-fluid rounded shadow border w-100"
+               style="object-fit: cover;">
+          <figcaption class="figure-caption text-center text-muted mt-2">
+            <strong>Bacterial Blight Impact on Cotton</strong>
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Info Cards Column -->
+      <div class="col-md-6">
+        <!-- Overview -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #3498db;">
+          <h4><i class="ri-information-line text-primary me-2"></i> Overview</h4>
+          <p style="font-size: 1.05rem; margin-top: 0px;">
+            Bacterial blight, caused by the bacterium <em>Xanthomonas citri</em> subsp. <em>malvacearum</em>,
+            is a serious disease affecting cotton. It targets all aerial parts and can drastically reduce crop yield if not managed early.
+          </p>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #f39c12;">
+          <h4><i class="ri-bug-line text-warning me-2"></i> Symptoms</h4>
+          <ul style="margin-top: 0px;">
+            <li><i class="ri-check-double-line text-success me-2"></i> Small, water-soaked lesions turning dark brown</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Angular leaf spots bounded by veins</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Dark streaks on stems and petioles</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Boll rot that damages lint</li>
+            <!-- <li><i class="ri-check-double-line text-success me-2"></i> Wilting and early leaf drop in severe cases</li> -->
+          </ul>
+        </div>
+
+        <!-- Control & Cure -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #27ae60;">
+          <h4><i class="ri-shield-check-line text-success me-2"></i> Control & Cure</h4>
+          <ul style="margin-top: 0px;">
+            <li><i class="ri-check-line text-primary me-2"></i> Use resistant cotton varieties</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Avoid overhead irrigation</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Use certified, disease-free seeds</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Apply copper-based bactericides early</li>
+            <!-- <li><i class="ri-check-line text-primary me-2"></i> Destroy infected debris from field</li> -->
+            <!-- <li><i class="ri-check-line text-primary me-2"></i> Rotate crops with non-host varieties</li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-end mt-4">
+      <a href="{{ url_for('diseases_info') }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line"></i> Back to All Diseases
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Inline CSS and JS for styling and animation -->
+<style>
+  ul li {
+    margin-bottom: 0px;
+    font-size: 1.05rem;
+  }
+  h4 {
+    font-weight: 600;
+    color: #2c3e50;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+      card.style.opacity = 0;
+      card.style.transform = "translateY(40px)";
+      setTimeout(() => {
+        card.style.transition = "all 0.8s ease-in-out";
+        card.style.opacity = 1;
+        card.style.transform = "translateY(0)";
+      }, 300);
+    });
+  });
+</script>
+{% endblock %}

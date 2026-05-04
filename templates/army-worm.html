@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-6" style="background: linear-gradient(to right, #f9f9f9, #eef1f5);">
+  <div class="container">
+    <h2 class="text-center mb-5" style="font-weight: bold; color: #2c3e50;">Army Worm Disease Information</h2>
+
+    <div class="row">
+     <!-- Image Column -->
+<div class="col-md-6 mb-4 d-flex align-items-start justify-content-center">
+  <figure class="figure" style="max-width: 465px;">
+    <img src="{{ url_for('static', filename='assets/img/armyworm.jpg') }}" 
+         alt="Army Worm on Cotton" 
+         class="figure-img img-fluid rounded shadow border w-100"
+         style="object-fit: cover;">
+    <figcaption class="figure-caption text-center text-muted mt-2"><strong>Army Worm Damage on Cotton Crop</strong> </figcaption>
+  </figure>
+</div>
+
+
+      <!-- Info Cards Column -->
+      <div class="col-md-6">
+        <!-- Overview -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #3498db;">
+          <h4><i class="ri-information-line text-primary me-2"></i> Overview</h4>
+          <p style="font-size: 1.05rem; margin-top: 0px;">
+            Army worms are caterpillar pests that feed on cotton leaves, causing extensive defoliation. 
+            They travel in groups and can destroy crops rapidly if not controlled in time. 
+            Army worms are most active during the night.
+          </p>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #f39c12;">
+          <h4><i class="ri-bug-line text-warning me-2"></i> Symptoms</h4>
+          <ul style="margin-top: 0px;">
+            <li><i class="ri-check-double-line text-success me-2"></i> Irregular holes or notches in leaves</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Skeletonized leaves</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Presence of caterpillars, especially under leaves</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Rapid defoliation in patches</li>
+            <li><i class="ri-check-double-line text-success me-2"></i> Reduced plant vigor and yield</li>
+          </ul>
+        </div>
+
+        <!-- Control & Cure -->
+        <div class="card shadow-sm rounded-4 p-4 mb-4" style="border-left: 5px solid #27ae60;">
+          <h4><i class="ri-shield-check-line text-success me-2"></i> Control & Cure</h4>
+          <ul style="margin-top: 0px;">
+            <li><i class="ri-check-line text-primary me-2"></i> Use biological control like Bacillus thuringiensis (Bt)</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Encourage natural predators such as birds and wasps</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Apply specific insecticides early in the larval stage</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Remove plant debris and maintain field hygiene</li>
+            <li><i class="ri-check-line text-primary me-2"></i> Conduct regular field monitoring</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-end mt-4">
+      <a href="{{ url_for('diseases_info') }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line"></i> Back to All Diseases
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Inline CSS and JS for styling and animation -->
+<style>
+  ul li {
+    margin-bottom: 5px;
+    font-size: 1.05rem;
+  }
+  h4 {
+    font-weight: 600;
+    color: #2c3e50;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+      card.style.opacity = 0;
+      card.style.transform = "translateY(40px)";
+      setTimeout(() => {
+        card.style.transition = "all 0.8s ease-in-out";
+        card.style.opacity = 1;
+        card.style.transform = "translateY(0)";
+      }, 300);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Community Forum | Cotton Disease Detection{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light-green min-vh-100">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="text-center mb-5" data-aos="fade-up">
+          <h2 class="display-5 fw-bold text-dark"><i class="ri-group-line text-success me-2"></i> Farmers Community</h2>
+          <p class="lead text-dark opacity-75">Discuss crop diseases, share knowledge, and seek advice from fellow farmers.</p>
+        </div>
+
+        <!-- Post Message Box -->
+        <div class="card shadow-sm border-0 rounded-4 mb-5" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-body p-4 bg-light rounded-4">
+            <form method="POST" action="{{ url_for('forum') }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold small text-muted">Post a question or share experience</label>
+                <textarea name="content" class="form-control bg-white" rows="3" placeholder="Type your message here..." required></textarea>
+              </div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm">
+                  <i class="ri-send-plane-line me-1"></i> Post Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Messages List -->
+        <div class="messages-container" data-aos="fade-up" data-aos-delay="200">
+          <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">Recent Discussions</h5>
+          
+          {% if messages %}
+            {% for msg in messages %}
+            <div class="card shadow-sm border-0 rounded-4 mb-3 border-start border-4 border-success">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                      <i class="ri-user-smile-line fs-5"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-0 fw-bold text-dark">{{ msg.username }}</h6>
+                      <small class="text-muted" style="font-size: 0.75rem;">{{ msg.timestamp.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                    </div>
+                  </div>
+                </div>
+                <p class="mb-0 text-dark mt-3 px-1">{{ msg.content }}</p>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-5">
+              <i class="ri-chat-1-line display-1 text-muted opacity-25 mb-3"></i>
+              <h5 class="text-muted">No messages yet.</h5>
+              <p class="text-muted small">Be the first to start a discussion!</p>
+            </div>
+          {% endif %}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Custom styles for forum */
+  .form-control:focus {
+    box-shadow: none;
+    border-color: #1a4d2e;
+  }
+  .btn-success {
+    background-color: #1a4d2e;
+    border-color: #1a4d2e;
+  }
+  .btn-success:hover {
+    background-color: #2d6a4f;
+    border-color: #2d6a4f;
+  }
+  .border-success {
+    border-color: #1a4d2e !important;
+  }
+  .text-success {
+    color: #1a4d2e !important;
+  }
+  .bg-success {
+    background-color: #1a4d2e !important;
+  }
+</style>
+{% endblock %}

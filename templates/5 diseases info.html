@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+  <section id="team" class="team section-bg">
+    <div class="container" data-aos="fade-up">
+
+      <div class="section-title">
+        <h1>Info About 5 Diseases</h1>
+        <h2>Cotton Plant Disease Management</h2>
+        <p></p>
+      </div>
+
+      <ol style="list-style: none;">
+        <li class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><i class="ri-check-double-line me-2 text-primary"></i> <strong>Aphids:</strong> Plow crop residue into
+              the soil to reduce inoculum levels...</span>
+            <a href="{{ url_for('aphids') }}" class="btn btn-sm btn-outline-primary rounded-pill">View Details</a>
+          </div>
+        </li>
+        <li class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><i class="ri-check-double-line me-2 text-primary"></i> <strong>Army Worm:</strong> Plow crop residue
+              into the soil to reduce inoculum levels...</span>
+            <a href="{{ url_for('army_worm') }}" class="btn btn-sm btn-outline-primary rounded-pill">View Details</a>
+          </div>
+        </li>
+        <li class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><i class="ri-check-double-line me-2 text-primary"></i> <strong>Bacterial Blight:</strong> Use on
+              certified, disease-free seed...</span>
+            <a href="{{ url_for('bacterial_blight') }}" class="btn btn-sm btn-outline-primary rounded-pill">View
+              Details</a>
+          </div>
+        </li>
+        <li class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><i class="ri-check-double-line me-2 text-primary"></i> <strong>Powdery Mildew:</strong> Use available
+              resistant varieties...</span>
+            <a href="{{ url_for('powdery_mildew') }}" class="btn btn-sm btn-outline-primary rounded-pill">View
+              Details</a>
+          </div>
+        </li>
+        <li class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <span><i class="ri-check-double-line me-2 text-primary"></i> <strong>Target Spot:</strong> The use of
+              resistant cotton varieties is the most effective method...</span>
+            <a href="{{ url_for('target_spot') }}" class="btn btn-sm btn-outline-primary rounded-pill">View Details</a>
+          </div>
+        </li>
+      </ol>
+
+
+
+      <!--        <div class="row">-->
+
+      <!--          <div class="col-lg-6">-->
+      <!--            <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="100">-->
+      <!--              <div class="pic"><img src="assets/img/team/team-1.jpg" class="img-fluid" alt=""></div>-->
+      <!--              <div class="member-info">-->
+      <!--                <h4>Walter White</h4>-->
+      <!--                <span>Chief Executive Officer</span>-->
+      <!--                <p>Explicabo voluptatem mollitia et repellat qui dolorum quasi</p>-->
+      <!--                <div class="social">-->
+      <!--                  <a href=""><i class="ri-twitter-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-facebook-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-instagram-fill"></i></a>-->
+      <!--                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+
+      <!--          <div class="col-lg-6 mt-4 mt-lg-0">-->
+      <!--            <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="200">-->
+      <!--              <div class="pic"><img src="assets/img/team/team-2.jpg" class="img-fluid" alt=""></div>-->
+      <!--              <div class="member-info">-->
+      <!--                <h4>Sarah Jhonson</h4>-->
+      <!--                <span>Product Manager</span>-->
+      <!--                <p>Aut maiores voluptates amet et quis praesentium qui senda para</p>-->
+      <!--                <div class="social">-->
+      <!--                  <a href=""><i class="ri-twitter-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-facebook-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-instagram-fill"></i></a>-->
+      <!--                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+
+      <!--          <div class="col-lg-6 mt-4">-->
+      <!--            <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="300">-->
+      <!--              <div class="pic"><img src="assets/img/team/team-3.jpg" class="img-fluid" alt=""></div>-->
+      <!--              <div class="member-info">-->
+      <!--                <h4>William Anderson</h4>-->
+      <!--                <span>CTO</span>-->
+      <!--                <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p>-->
+      <!--                <div class="social">-->
+      <!--                  <a href=""><i class="ri-twitter-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-facebook-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-instagram-fill"></i></a>-->
+      <!--                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+
+      <!--          <div class="col-lg-6 mt-4">-->
+      <!--            <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="400">-->
+      <!--              <div class="pic"><img src="assets/img/team/team-4.jpg" class="img-fluid" alt=""></div>-->
+      <!--              <div class="member-info">-->
+      <!--                <h4>Amanda Jepson</h4>-->
+      <!--                <span>Accountant</span>-->
+      <!--                <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p>-->
+      <!--                <div class="social">-->
+      <!--                  <a href=""><i class="ri-twitter-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-facebook-fill"></i></a>-->
+      <!--                  <a href=""><i class="ri-instagram-fill"></i></a>-->
+      <!--                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+
+    </div>
+
+    </div>
+  </section><!-- End Team Section -->
+
+
+
+{% endblock %}
