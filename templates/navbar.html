@@ -1,70 +1,79 @@
 <nav class="navbar navbar-expand-lg navbar-professional navbar-light fixed-top py-2">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center me-0" href="{{ url_for('home') }}" style="max-width: 75%;">
-      <img src="{{ url_for('static', filename='assets/img/logo.png') }}" alt="Logo" width="35" height="35" class="me-2 flex-shrink-0">
-      <span class="fw-bold tracking-tight text-truncate">Cotton Disease <span class="text-secondary">Detection</span></span>
+  <div class="container-fluid px-lg-5">
+    <!-- Logo Section -->
+    <a class="navbar-brand d-flex align-items-center me-0" href="{{ url_for('home') }}">
+      <img src="{{ url_for('static', filename='assets/img/logo.png') }}" alt="Logo" width="38" height="38" class="me-2 flex-shrink-0">
+      <div class="d-flex flex-column">
+        <span class="fw-bold tracking-tight text-dark lh-1" style="font-size: 1.1rem;">Cotton Disease</span>
+        <span class="text-success fw-medium" style="font-size: 0.85rem;">Detection</span>
+      </div>
     </a>
 
+    <!-- Mobile Toggler -->
     <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
       data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-
-
+    <!-- Navigation Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav mx-auto">
         <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+          <a class="nav-link {{ 'active' if request.path == url_for('home') }}" href="{{ url_for('home') }}">
+            <i class="ri-home-5-line"></i> Home
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('diseases_info') }}">Diseases Info</a>
+          <a class="nav-link {{ 'active' if request.path == url_for('diseases_info') }}" href="{{ url_for('diseases_info') }}">
+            <i class="ri-book-read-line"></i> Diseases Info
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('ai_assistant') }}">AI Assistant</a>
+          <a class="nav-link {{ 'active' if request.path == url_for('ai_assistant') }}" href="{{ url_for('ai_assistant') }}">
+            <i class="ri-chat-voice-line"></i> AI Assistant
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('forum') }}">Community Forum</a>
+          <a class="nav-link {{ 'active' if request.path == url_for('forum') }}" href="{{ url_for('forum') }}">
+            <i class="ri-team-line"></i> Community Forum
+          </a>
         </li>
 
         {% if current_user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('my_reports') }}">Reports</a>
+          <a class="nav-link {{ 'active' if request.path == url_for('my_reports') }}" href="{{ url_for('my_reports') }}">
+            <i class="ri-file-list-3-line"></i> Reports
+          </a>
         </li>
-        {% if current_user.is_admin %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
-        </li>
-        {% endif %}
         {% endif %}
       </ul>
 
-      <div class="navbar-nav-actions d-flex align-items-center gap-3">
+      <!-- User Actions -->
+      <div class="navbar-nav-actions d-flex align-items-center gap-2">
         {% if current_user.is_authenticated %}
         <div class="dropdown">
-          <a class="btn btn-professional btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            <i class="ri-user-line me-1"></i> {{ current_user.username }}
+          <a class="btn btn-light rounded-pill px-4 py-2 border shadow-sm d-flex align-items-center gap-2 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 24px; height: 24px; font-size: 0.7rem;">
+                {{ current_user.username[0] | upper }}
+            </div>
+            <span class="fw-semibold text-dark" style="font-size: 0.9rem;">{{ current_user.username | upper }}</span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4 mt-2">
-            <li><a class="dropdown-item py-2 px-3" href="{{ url_for('profile') }}"><i class="ri-settings-line me-1"></i> Profile Settings</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item py-2 px-3 text-danger" href="{{ url_for('logout') }}"><i
-                  class="ri-logout-box-line me-1"></i> Logout</a></li>
+          <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-3 p-2">
+            <li><a class="dropdown-item py-2 px-3 rounded-3" href="{{ url_for('profile') }}"><i class="ri-settings-3-line me-2"></i> Profile Settings</a></li>
+            <li><hr class="dropdown-divider opacity-50"></li>
+            <li><a class="dropdown-item py-2 px-3 rounded-3 text-danger" href="{{ url_for('logout') }}"><i class="ri-logout-circle-r-line me-2"></i> Logout</a></li>
           </ul>
         </div>
-        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-professional d-md-none">
-          <i class="ri-logout-box-line"></i> Logout
-        </a>
         {% else %}
         <div class="d-flex gap-2">
-            <a href="{{ url_for('login') }}" class="btn btn-professional btn-light">Login</a>
-            <a href="{{ url_for('register') }}" class="btn btn-professional btn-accent-prof">Sign Up</a>
+            <a href="{{ url_for('login') }}" class="btn btn-light border rounded-pill px-4">Login</a>
+            <a href="{{ url_for('register') }}" class="btn btn-success rounded-pill px-4">Sign Up</a>
         </div>
         {% endif %}
-        <a href="{{ url_for('try_page') }}" class="btn btn-professional btn-primary-prof d-none d-lg-flex">Get
-          Started</a>
+        
+        <a href="{{ url_for('try_page') }}" class="btn btn-success rounded-pill px-4 py-2 ms-lg-2 d-none d-lg-flex align-items-center gap-2">
+          <i class="ri-sparkling-2-line"></i> Get Started
+        </a>
       </div>
     </div>
   </div>

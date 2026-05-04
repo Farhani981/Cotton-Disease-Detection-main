@@ -1,95 +1,170 @@
 {% extends 'base.html' %}
 
-{% block title %}Try Prediction | Cotton Disease Detection{% endblock %}
+{% block title %}Cotton Disease Prediction | AI-Powered Diagnosis{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-light min-vh-100">
+<!-- Decorative Leaves -->
+<img src="{{ url_for('static', filename='assets/img/decorative-leaf.png') }}" class="decorative-leaf-left d-none d-lg-block" alt="Leaf Decoration">
+<img src="{{ url_for('static', filename='assets/img/decorative-leaf.png') }}" class="decorative-leaf-right d-none d-lg-block" alt="Leaf Decoration">
+
+<section class="py-5 min-vh-100" style="background-color: #f8fafc;">
   <div class="container py-5">
-    <div class="text-center mb-5">
-      <h2 class="display-5 text-success fw-bold">Cotton Disease Prediction</h2>
-      <p class="lead">Upload a clear photo of the cotton leaf for diagnosis.</p>
+    <!-- Hero Header -->
+    <div class="text-center mb-5" data-aos="fade-down">
+      <h1 class="prediction-hero-title">Cotton <span>Disease Prediction</span></h1>
+      <p class="text-muted fs-5">Upload a clear photo of the cotton leaf for accurate AI-powered diagnosis.</p>
     </div>
 
-    <div class="row justify-content-center">
-      <div class="col-lg-6">
-        <div class="card shadow-lg border-0 rounded-4">
-          <div class="card-body p-5">
-
-            <!-- Weather Conditions Box -->
-            <div id="weather-box" class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 mb-4 d-none border shadow-sm">
-               <div>
-                  <h6 class="mb-0 fw-bold"><i class="ri-map-pin-line text-danger"></i> <span id="loc-name">Local Farm Weather</span></h6>
-                  <small class="text-muted" id="weather-alert">Checking crop risk conditions...</small>
-               </div>
-               <div class="text-end">
-                  <h4 class="mb-0 fw-bold text-success" id="temp-val">--°C</h4>
-                  <small class="text-secondary">Humidity: <span id="hum-val" class="fw-bold">--%</span></small>
-               </div>
-            </div>
-
-            <!-- 1. Selection & Upload Area -->
-            <form id="upload-file" method="post" enctype="multipart/form-data">
-              <div id="upload-zone" class="p-4 text-center border-2 border-dashed rounded-4 mb-4"
-                style="border: 2px dashed #1a4d2e; background-color: #f8fff9;">
-                <i class="ri-image-add-line display-4 text-success mb-3"></i>
-                <h5>Select Leaf Image</h5>
-                <input type="file" name="file" id="imageUpload" class="form-control mt-3"
-                  accept=".png, .jpg, .jpeg, .jfif, .webp">
-              </div>
-            </form>
-
-            <!-- 2. Preview Area (Hidden until selected) -->
-            <div id="preview-area" class="text-center mb-4" style="display: none;">
-              <img id="imagePreview" src="" class="img-fluid rounded-4 shadow-sm mb-3"
-                style="max-height: 350px; border: 4px solid white;">
-              <div>
-                <button type="button" id="btn-predict" class="btn btn-success btn-lg px-5 rounded-pill shadow">
-                  <span id="btn-text">Predict Disease</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- 3. Result Area (The most important part) -->
-            <div id="result-box" class="mt-4 p-4 rounded-4 border-start border-5 shadow-sm"
-              style="display: none; background: #ffffff; border-left-color: #1a4d2e !important;">
-              <h4 class="text-success fw-bold mb-3">Diagnosis Report</h4>
-              <hr>
-              <div id="prediction-result" class="h2 fw-bold text-dark mb-2">Finding result...</div>
-              <div id="confidence-score" class="h5 text-muted">Confidence: --%</div>
-              
-              <div id="treatment-box" class="mt-3 p-3 bg-light rounded-3 d-none" style="border-left: 4px solid #1a4d2e;">
-                <h6 class="text-success fw-bold mb-1"><i class="ri-medicine-bottle-line me-1"></i> Recommended Action</h6>
-                <p id="treatment-text" class="mb-0 small text-dark fw-medium"></p>
-              </div>
-
-              <div class="mt-4">
-                <a href="#" id="download-link" class="btn btn-outline-success btn-sm d-none">
-                  <i class="ri-download-line me-1"></i>Download PDF Report
-                </a>
-                <button type="button" class="btn btn-light btn-sm ms-2" onclick="location.reload()">
-                  Try Another Image
-                </button>
-              </div>
-            </div>
-
-            <!-- 4. Loader -->
-            <div id="prediction-loader" class="text-center py-4" style="display: none;">
-              <div class="spinner-grow text-success" role="status"></div>
-              <p class="mt-2 fw-semibold">Analyzing leaf patterns...</p>
-            </div>
-
+    <!-- Weather Widget -->
+    <div class="weather-widget-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="d-flex align-items-center">
+        <div class="weather-icon-circle">
+          <i class="ri-sun-cloudy-line fs-2 text-warning" id="weather-icon"></i>
+        </div>
+        <div>
+          <h6 class="mb-1 fw-bold text-dark"><i class="ri-map-pin-2-fill text-danger me-1"></i> Local Farm Weather</h6>
+          <div id="weather-status-text" class="small fw-medium text-success">
+            <i class="ri-checkbox-circle-fill"></i> Conditions are generally optimal
           </div>
+          <div class="text-muted small mt-1">Updated just now</div>
         </div>
       </div>
+      <div class="text-md-end mt-3 mt-md-0">
+        <div class="display-6 fw-bold text-dark" id="temp-val">31.6°C</div>
+        <div class="text-muted">Humidity: <span class="fw-bold text-dark" id="hum-val">35%</span></div>
+      </div>
+    </div>
+
+    <!-- Main Upload Container -->
+    <div class="upload-container-main" data-aos="zoom-in" data-aos-delay="200">
+      <div class="upload-inner-zone text-center">
+        <form id="upload-file" method="post" enctype="multipart/form-data">
+          <!-- Selection Mode -->
+          <div id="upload-mode">
+            <div class="upload-icon-circle">
+              <i class="ri-upload-cloud-2-line"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">Select Leaf Image</h4>
+            <p class="text-muted small mb-4">Upload a clear image of the cotton leaf for best results</p>
+            
+            <label for="imageUpload" class="btn-choose-file cursor-pointer">
+              <i class="ri-image-add-line"></i> Choose File
+            </label>
+            <input type="file" name="file" id="imageUpload" class="d-none" accept=".png, .jpg, .jpeg, .jfif, .webp">
+            
+            <p class="text-muted x-small mt-3 mb-0">PNG, JPG, JPEG up to 10MB</p>
+          </div>
+
+          <!-- Preview Mode -->
+          <div id="preview-mode" style="display: none;">
+            <div class="position-relative d-inline-block">
+                <img id="imagePreview" src="" class="img-fluid rounded-4 shadow mb-4" style="max-height: 400px; border: 8px solid white;">
+                <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 translate-middle shadow" onclick="resetUpload()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div>
+              <button type="button" id="btn-predict" class="btn btn-success btn-lg rounded-pill px-5 shadow-lg">
+                <i class="ri-magic-line me-2"></i> <span id="btn-text">Analyze Leaf Image</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Prediction Result Box -->
+        <div id="result-box" class="mt-5 p-4 rounded-4 border shadow-sm" style="display: none; background: #ffffff;">
+          <div class="d-flex align-items-center justify-content-center mb-3">
+             <div class="bg-success-subtle p-2 rounded-circle me-2">
+                <i class="ri-shield-check-fill text-success fs-4"></i>
+             </div>
+             <h5 class="text-dark fw-bold mb-0">AI Diagnosis Result</h5>
+          </div>
+          <hr class="opacity-10">
+          <div id="prediction-result" class="display-6 fw-bold text-success mb-2">Finding result...</div>
+          <div id="confidence-score" class="h6 text-muted mb-4">Confidence: --%</div>
+          
+          <div id="treatment-box" class="p-3 bg-light rounded-3 d-none text-start border-start border-success border-4">
+            <h6 class="text-success fw-bold mb-2"><i class="ri-capsule-fill me-1"></i> Recommended Treatment Plan</h6>
+            <p id="treatment-text" class="mb-0 text-dark fw-medium" style="font-size: 0.95rem;"></p>
+          </div>
+
+          <div class="mt-4 d-flex flex-wrap gap-2 justify-content-center">
+            <a href="#" id="download-link" class="btn btn-dark rounded-pill px-4 d-none">
+              <i class="ri-file-pdf-line me-1"></i>Download PDF Report
+            </a>
+            <button type="button" class="btn btn-outline-success rounded-pill px-4" onclick="resetUpload()">
+              <i class="ri-refresh-line me-1"></i> Scan New Leaf
+            </button>
+          </div>
+        </div>
+
+        <!-- Loader -->
+        <div id="prediction-loader" class="text-center py-5" style="display: none;">
+          <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-3 fw-bold text-dark">AI is analyzing leaf patterns...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Highlights -->
+    <div class="feature-highlights" data-aos="fade-up" data-aos-delay="300">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="feature-item-small">
+                    <div class="feature-icon-mini"><i class="ri-cpu-line"></i></div>
+                    <div class="feature-text-mini">
+                        <h6>AI Analysis</h6>
+                        <p>Advanced ML models</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="feature-item-small">
+                    <div class="feature-icon-mini"><i class="ri-flashlight-line"></i></div>
+                    <div class="feature-text-mini">
+                        <h6>Instant Results</h6>
+                        <p>High accuracy detection</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="feature-item-small">
+                    <div class="feature-icon-mini"><i class="ri-user-voice-line"></i></div>
+                    <div class="feature-text-mini">
+                        <h6>Expert Support</h6>
+                        <p>Connect with specialists</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="feature-item-small">
+                    <div class="feature-icon-mini"><i class="ri-lock-2-line"></i></div>
+                    <div class="feature-text-mini">
+                        <h6>Secure & Private</h6>
+                        <p>Encrypted data handling</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
   </div>
 </section>
 
 <script>
+  function resetUpload() {
+      document.getElementById('upload-mode').style.display = 'block';
+      document.getElementById('preview-mode').style.display = 'none';
+      document.getElementById('result-box').style.display = 'none';
+      document.getElementById('imageUpload').value = '';
+      document.getElementById('imagePreview').src = '';
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     const fileInput = document.getElementById('imageUpload');
-    const uploadZone = document.getElementById('upload-zone');
-    const previewArea = document.getElementById('preview-area');
+    const uploadMode = document.getElementById('upload-mode');
+    const previewMode = document.getElementById('preview-mode');
     const imagePreview = document.getElementById('imagePreview');
     const btnPredict = document.getElementById('btn-predict');
     const btnText = document.getElementById('btn-text');
@@ -103,133 +178,65 @@
     fileInput.addEventListener('change', function () {
       const file = this.files[0];
       if (file) {
-        uploadZone.style.display = 'none';
-        previewArea.style.display = 'block';
+        uploadMode.style.display = 'none';
+        previewMode.style.display = 'block';
         imagePreview.src = URL.createObjectURL(file);
-
-        // Reset results from previous run
         resultBox.style.display = 'none';
-        downloadLink.classList.add('d-none');
       }
     });
 
-    // Handle Prediction Click
+    // Handle Prediction
     btnPredict.addEventListener('click', async function () {
       const formData = new FormData(document.getElementById('upload-file'));
-
-      // UI State: Loading
       btnPredict.disabled = true;
-      btnText.textContent = "Processing...";
+      btnText.textContent = "Analyzing...";
       loader.style.display = 'block';
       resultBox.style.display = 'none';
 
       try {
-        const response = await fetch('/predict', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error("Server communication error (HTTP " + response.status + ")");
-        }
-
+        const response = await fetch('/predict', { method: 'POST', body: formData });
         const data = await response.json();
-        console.log("Response Data:", data);
 
         if (data.status === 'success') {
-          // UPDATE AND SHOW RESULT
           predictionResult.textContent = data.prediction;
           confidenceScore.textContent = "Confidence Score: " + data.confidence + "% Accuracy";
-
           if (data.treatment) {
              document.getElementById('treatment-text').textContent = data.treatment;
              document.getElementById('treatment-box').classList.remove('d-none');
           }
-
-          // Force display the box
-          resultBox.style.setProperty('display', 'block', 'important');
-
+          resultBox.style.display = 'block';
           if (data.report_id) {
             downloadLink.href = "/download_report/" + data.report_id;
             downloadLink.classList.remove('d-none');
           }
-
-          // Scroll to result
           resultBox.scrollIntoView({ behavior: 'smooth' });
         } else {
           alert("Error: " + data.message);
         }
-
       } catch (err) {
-        console.error("Prediction failed:", err);
         alert("System Error: " + err.message);
       } finally {
         loader.style.display = 'none';
         btnPredict.disabled = false;
-        btnText.textContent = "Predict Again";
+        btnText.textContent = "Analyze Again";
       }
     });
 
-    // Handle Weather Fetching
-    const weatherBox = document.getElementById('weather-box');
-    const tempVal = document.getElementById('temp-val');
-    const humVal = document.getElementById('hum-val');
-    const weatherAlert = document.getElementById('weather-alert');
-
+    // Weather Fetching
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        weatherBox.classList.remove('d-none');
-        
         try {
           const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m`);
           const data = await res.json();
           if(data.current) {
-             const temp = data.current.temperature_2m;
-             const hum = data.current.relative_humidity_2m;
-             tempVal.textContent = temp + "°C";
-             humVal.textContent = hum + "%";
-             
-             if(hum > 70) {
-                 weatherAlert.innerHTML = '<span class="text-danger fw-bold"><i class="ri-alert-line"></i> High Humidity! Fungus/Mildew risk is high.</span>';
-             } else if (temp > 35) {
-                 weatherAlert.innerHTML = '<span class="text-warning fw-bold"><i class="ri-sun-line"></i> High Heat! Ensure proper crop irrigation.</span>';
-             } else {
-                 weatherAlert.innerHTML = '<span class="text-success fw-bold"><i class="ri-check-line"></i> Conditions are generally optimal.</span>';
-             }
+             document.getElementById('temp-val').textContent = data.current.temperature_2m + "°C";
+             document.getElementById('hum-val').textContent = data.current.relative_humidity_2m + "%";
           }
-        } catch(err) {
-           console.log("Weather fetch failed", err);
-        }
-      }, (err) => {
-         console.log("Location access denied or unavailable.");
+        } catch(err) { console.log("Weather failed", err); }
       });
     }
   });
 </script>
-
-<style>
-  .border-dashed {
-    border-style: dashed !important;
-  }
-
-  .card {
-    transition: transform 0.3s ease;
-  }
-
-  .btn-success {
-    background-color: #1a4d2e;
-    border-color: #1a4d2e;
-  }
-
-  .btn-success:hover {
-    background-color: #2d6a4f;
-    border-color: #2d6a4f;
-  }
-
-  .text-success {
-    color: #1a4d2e !important;
-  }
-</style>
 {% endblock %}
