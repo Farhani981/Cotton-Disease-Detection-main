@@ -30,8 +30,8 @@ git lfs install
 ### Clone and Pull LFS Files
 
 ```bash
-git clone https://github.com/anomusly/Cotton-Disease-Detection.git
-cd Cotton-Disease-Detection
+git clone https://github.com/Farhani981/Cotton-Disease-Detection-main.git
+cd Cotton-Disease-Detection-main
 git lfs pull
 ```
 
