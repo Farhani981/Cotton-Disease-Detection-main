@@ -23,12 +23,21 @@ from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 try:
-    from tensorflow.keras.models import load_model
+    import tflite_runtime.interpreter as tflite
+    TFLITE_AVAILABLE = True
+except ImportError:
+    try:
+        import tensorflow.lite as tflite
+        TFLITE_AVAILABLE = True
+    except ImportError:
+        TFLITE_AVAILABLE = False
+
+try:
     from tensorflow.keras.preprocessing import image
 except ImportError:
-    print("Warning: TensorFlow not available. Please install Python 3.11 with TensorFlow support.")
-    load_model = None
     image = None
+
+from PIL import Image
 import numpy as np
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import joinedload
@@ -88,24 +97,36 @@ def send_notification_email(to, subject, body):
         print(f"Error sending email: {e}")
         return False
 
-# Load the trained model
-# model name
-MODEL_PATH ='resnet50.h5'
+# Load the trained model (TFLite or H5)
+MODEL_PATH_TFLITE = 'resnet50.tflite'
+MODEL_PATH_H5 = 'resnet50.h5'
 
-def log_debug(message):
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    with open('debug_prediction.log', 'a') as f:
-        f.write(f"[{timestamp}] {message}\n")
+interpreter = None
+input_details = None
+output_details = None
+model_h5 = None
 
-try:
-    # load trained model
-    model = load_model(MODEL_PATH)
-    log_debug("Main model loaded successfully.")
-    print("Main model loaded successfully.")
-except (ImportError, Exception) as e:
-    log_debug(f"Warning: Could not load ML models: {e}")
-    print(f"Warning: Could not load ML models: {e}")
-    model = None
+if TFLITE_AVAILABLE and os.path.exists(MODEL_PATH_TFLITE):
+    try:
+        interpreter = tflite.Interpreter(model_path=MODEL_PATH_TFLITE)
+        interpreter.allocate_tensors()
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
+        log_debug("TFLite model loaded successfully.")
+        print("TFLite model loaded successfully.")
+    except Exception as e:
+        log_debug(f"Error loading TFLite model: {e}")
+        interpreter = None
+
+if interpreter is None and os.path.exists(MODEL_PATH_H5):
+    try:
+        from tensorflow.keras.models import load_model
+        model_h5 = load_model(MODEL_PATH_H5)
+        log_debug("H5 model loaded successfully.")
+        print("H5 model loaded successfully.")
+    except Exception as e:
+        log_debug(f"Error loading H5 model: {e}")
+        model_h5 = None
 def is_plant_image(img_path):
     """
     Simple image file validation - accept any image file.
@@ -136,54 +157,65 @@ def is_plant_image(img_path):
         log_debug(f"Error validating image: {e}")
         return False
 
-def model_predict(img_path, model, confidence_threshold=0.55):
+def model_predict(img_path, confidence_threshold=0.55):
     log_debug(f"Starting prediction for: {img_path}")
     
-    # Check if model is loaded
-    if model is None:
-        log_debug("Warning: ML model not loaded")
-        return "ML Model Not Available - Please install Python 3.11 with TensorFlow support for disease detection. (Confidence: 0%)"
-    
-    # First check if image is plant/leaf related
-    try:
-        log_debug("Loading and resizing image...")
-        loaded_image = image.load_img(img_path, target_size=(224, 224))
+    # 1. Try TFLite Prediction (Fast & Light)
+    if interpreter is not None:
+        try:
+            log_debug("Using TFLite interpreter...")
+            img = Image.open(img_path).convert('RGB').resize((224, 224))
+            img_array = np.array(img, dtype=np.float32) / 255.0
+            img_array = np.expand_dims(img_array, axis=0)
 
-        log_debug("Converting image to array...")
-        loaded_image_in_array = image.img_to_array(loaded_image)
+            interpreter.set_tensor(input_details[0]['index'], img_array)
+            interpreter.invoke()
+            prediction = interpreter.get_tensor(output_details[0]['index'])
+            
+            confidence = np.max(prediction)
+            results_index = np.argmax(prediction, axis=1)[0]
+            
+            disease_labels = {
+                0: "The leaf shows signs of Aphids",
+                1: "The leaf shows signs of Army Worm",
+                2: "The leaf shows signs of Bacterial Blight",
+                3: "The leaf is Healthy",
+                4: "The leaf shows signs of Powdery Mildew",
+                5: "The leaf shows signs of Target Spot"
+            }
+            
+            result_text = f"{disease_labels.get(results_index, 'Unknown disease')} (Confidence: {confidence*100:.2f}%)"
+            log_debug(f"TFLite Prediction result: {result_text}")
+            return result_text
+        except Exception as e:
+            log_debug(f"TFLite prediction error: {e}")
 
-        log_debug("Normalizing array...")
-        loaded_image_in_array = loaded_image_in_array/255
+    # 2. Fallback to H5 Prediction (If TFLite fails and H5 is available)
+    if model_h5 is not None:
+        try:
+            log_debug("Falling back to H5 model...")
+            loaded_image = image.load_img(img_path, target_size=(224, 224))
+            x = image.img_to_array(loaded_image) / 255.0
+            x = np.expand_dims(x, axis=0)
+            prediction = model_h5.predict(x)
+            
+            confidence = np.max(prediction)
+            results_index = np.argmax(prediction, axis=1)[0]
+            
+            disease_labels = {
+                0: "The leaf shows signs of Aphids",
+                1: "The leaf shows signs of Army Worm",
+                2: "The leaf shows signs of Bacterial Blight",
+                3: "The leaf is Healthy",
+                4: "The leaf shows signs of Powdery Mildew",
+                5: "The leaf shows signs of Target Spot"
+            }
+            
+            return f"{disease_labels.get(results_index, 'Unknown disease')} (Confidence: {confidence*100:.2f}%)"
+        except Exception as e:
+            log_debug(f"H5 prediction error: {e}")
 
-        log_debug("Expanding dimensions...")
-        x = np.expand_dims(loaded_image_in_array, axis=0)
-
-        log_debug("Running model.predict...")
-        prediction = model.predict(x)
-        
-        log_debug("Processing prediction results...")
-        confidence = np.max(prediction) 
-        results_index = np.argmax(prediction, axis=1)[0]
-
-        # map indexes to disease names
-        disease_labels = {
-            0: "The leaf shows signs of Aphids",
-            1: "The leaf shows signs of Army Worm",
-            2: "The leaf shows signs of Bacterial Blight",
-            3: "The leaf is Healthy",
-            4: "The leaf shows signs of Powdery Mildew",
-            5: "The leaf shows signs of Target Spot"
-        }
-
-        result_text = f"{disease_labels.get(results_index, 'Unknown disease')} (Confidence: {confidence*100:.2f}%)"
-        log_debug(f"Prediction result: {result_text}")
-        return result_text
-    
-    except Exception as e:
-        log_debug(f"Exception in model_predict: {str(e)}")
-        import traceback
-        log_debug(traceback.format_exc())
-        return f"Error during prediction: {str(e)}"
+    return "AI Model Not Available - Please ensure model files are present. (Confidence: 0%)"
 
 def analyze_image_with_gemini(img_path):
     """
@@ -485,7 +517,7 @@ def upload():
                 'status': 'error',
                 'message': 'Invalid image. Please upload plant leaf image.'
             }), 400
-        preds = model_predict(file_path, model)
+        preds = model_predict(file_path)
 
         # Extract prediction and confidence properly
         prediction = preds.split("(")[0].strip() if "(" in preds else preds
