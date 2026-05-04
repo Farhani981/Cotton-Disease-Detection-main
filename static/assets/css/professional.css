@@ -645,28 +645,6 @@ h6 {
   color: #6b7280;
 }
 
-/* Decorative Leaves */
-.decorative-leaf-left {
-  position: fixed;
-  top: 15%;
-  left: -50px;
-  width: 250px;
-  opacity: 0.8;
-  z-index: 1;
-  pointer-events: none;
-  transform: rotate(-15deg);
-}
-
-.decorative-leaf-right {
-  position: fixed;
-  bottom: 10%;
-  right: -50px;
-  width: 280px;
-  opacity: 0.8;
-  z-index: 1;
-  pointer-events: none;
-  transform: rotate(15deg);
-}
 
 @media (max-width: 768px) {
   .prediction-hero-title {
