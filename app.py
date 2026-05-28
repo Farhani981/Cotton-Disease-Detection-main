@@ -46,6 +46,17 @@ from sqlalchemy import func,and_
 
 MAX_UPLOADS_GUEST = 1
 
+def log_debug(message):
+    """Simple logging function to print debug messages to console and a log file."""
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_entry = f"[{timestamp}] {message}"
+    print(log_entry)
+    try:
+        with open("debug_prediction.log", "a", encoding="utf-8") as f:
+            f.write(log_entry + "\n")
+    except:
+        pass
+
 # ------------------- App Config -------------------
 
 app = Flask(__name__)
